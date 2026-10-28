@@ -189,6 +189,7 @@ Configure `#define STAGE <N>` at the top of [`GhostVehicle_Keil/main.c`](GhostVe
 * **Stage 10 (FINAL):** Full integrated fusion system (DSP-filtered acoustic verification + ultrasonic distance hierarchy + multi-tier alerts).
 
 ---
+<img width="1600" height="721" alt="image" src="https://github.com/user-attachments/assets/4d098465-296f-49da-890d-ffd10c3dd36f" />
 
 ## 👥 Team & Mentorship
 
