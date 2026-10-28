@@ -1,0 +1,30 @@
+# Keil uVision build artifacts
+*.o
+*.d
+*.crf
+*.axf
+*.lnp
+*.dep
+*.build_log.htm
+*.map
+*.htm
+*.lst
+*.m51
+*.i
+*.tmp
+
+# Keil user/session settings (keep base project configs)
+*.uvgui*
+*.uvopt
+*.uvoptx.bak
+*.uvprojx.bak
+
+# OS generated files
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# IDE configs
+.vscode/
+.idea/
