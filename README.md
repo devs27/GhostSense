@@ -128,11 +128,6 @@ GhostSense/
 │   ├── TEST_CASES.md              # 10-stage test matrix & fault handling cases
 │   ├── sample_sensor_readings.csv # Calibrated approach run sensor logs
 │   └── Threshold_Evidence_Workbook_SAMPLE.xlsx
-├── docs/                          # Academic & Technical Documentation
-│   ├── Embedded_Report.docx       # Full IEEE-format technical publication report
-│   ├── Procedure.docx             # Experimental bring-up and verification protocol
-│   ├── Ghost_Vehicle_4_Sensor_Connection_and_Final_Code.pdf
-│   └── Review_*.pptx / .pdf       # Design review presentation slide decks (0 to 3)
 ├── TECHNICAL_DESIGN.md            # In-depth architectural & mathematical design doc
 ├── LICENSE                        # MIT License
 ├── .gitignore                     # Keil build artifacts and OS ignores
