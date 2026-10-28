@@ -1,11 +1,21 @@
 # GhostSense: Pre-Visual Vehicle Detection in Dense Fog via Acoustic-Pressure Sensing & Ultrasonic Fusion
 
 [![Platform](https://img.shields.io/badge/Platform-TI%20TM4C123GH6PM%20(ARM%20Cortex--M4F)-blue.svg)](https://www.ti.com/tool/EK-TM4C123GXL)
-[![Firmware](https://img.shields.io/badge/Firmware-Bare--Metal%20Register--Level%20Embedded%20C-orange.svg)](#firmware-architecture)
-[![IDE](https://img.shields.io/badge/IDE-Keil%20uVision%205%20(C99)-darkgreen.svg)](#keil-mdk-build--testing-stages)
-[![License](https://img.shields.io/badge/License-Academic%20Use-lightgrey.svg)](#team--mentorship)
+[![Firmware](https://img.shields.io/badge/Firmware-Bare--Metal%20Register--Level%20Embedded%20C-orange.svg)](#-firmware-architecture)
+[![IDE](https://img.shields.io/badge/IDE-Keil%20uVision%205%20(C99)-darkgreen.svg)](#-setup-steps--environment-variables)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Design Document](https://img.shields.io/badge/TDD-Technical%20Design%20Doc-purple.svg)](TECHNICAL_DESIGN.md)
+[![Test Suite](https://img.shields.io/badge/Tests-10%2F10%20Stages%20Passing-brightgreen.svg)](sample_data/TEST_CASES.md)
 
 > **GhostSense** is a non-visual, edge-processed collision warning embedded system designed to detect approaching vehicles in dense fog long before headlights or optical Advanced Driver Assistance Systems (ADAS) become visible. Built from the ground up on the Texas Instruments **TM4C123GH6PM** ARM Cortex-M4F microcontroller using bare-metal register-level Embedded C and fixed-point digital signal processing.
+
+---
+
+### 📑 Quick Project Links
+* 📘 **[Technical Design Document (TDD)](TECHNICAL_DESIGN.md)** — Architectural block diagrams, mathematical formulation of Q14 biquad filter, finite state machine, and hardware resource analysis.
+* 🧪 **[Test Cases & Verification Suite](sample_data/TEST_CASES.md)** — Stage 1–10 validation matrix, distance boundary tests, and fail-safe exception protocols.
+* 📊 **[Sample Sensor Data (CSV)](sample_data/sample_sensor_readings.csv)** — Calibrated experimental dataset logged during vehicle approach tests.
+* 📄 **[MIT License](LICENSE)** — Open-source permissive license.
 
 ---
 
@@ -114,22 +124,65 @@ GhostSense/
 │   ├── delay.c / delay.h          # Hardware calibrated delay utilities
 │   ├── util.c / util.h            # Safe string and integer-to-string formatters
 │   └── README_KEIL_STEPS.txt      # Step-by-step Keil compilation guide
+├── sample_data/                   # Validation Datasets & Test Suite
+│   ├── TEST_CASES.md              # 10-stage test matrix & fault handling cases
+│   ├── sample_sensor_readings.csv # Calibrated approach run sensor logs
+│   └── Threshold_Evidence_Workbook_SAMPLE.xlsx
 ├── docs/                          # Academic & Technical Documentation
 │   ├── Embedded_Report.docx       # Full IEEE-format technical publication report
 │   ├── Procedure.docx             # Experimental bring-up and verification protocol
 │   ├── Ghost_Vehicle_4_Sensor_Connection_and_Final_Code.pdf
 │   └── Review_*.pptx / .pdf       # Design review presentation slide decks (0 to 3)
+├── TECHNICAL_DESIGN.md            # In-depth architectural & mathematical design doc
+├── LICENSE                        # MIT License
 ├── .gitignore                     # Keil build artifacts and OS ignores
 └── README.md                      # Primary project documentation
 ```
 
 ---
 
-## 🚀 Keil MDK Build & Testing Stages
+## 🛠️ Setup Steps & Environment Variables
 
-The firmware features an incremental bring-up switch configured via `#define STAGE <N>` in [`GhostVehicle_Keil/main.c`](GhostVehicle_Keil/main.c):
+### 1. Prerequisites & Toolchain Installation
+* **IDE:** [Keil µVision 5](https://www.keil.com/demo/eval/arm.htm) (MDK-ARM v5.38 or higher)
+* **Device Pack:** Keil Texas Instruments Tiva C Series Device Family Pack (`Keil::TM4C_DFP`)
+* **Hardware Drivers:** [TI Stellaris In-Circuit Debug Interface (ICDI) Drivers](https://www.ti.com/tool/SW-ICDI-DRIVERS)
 
-* **Stage 1:** Onboard LaunchPad RGB LED blink test (Clock verify).
+### 2. Environment Variables & System Paths (Windows)
+For command-line build and flashing tools, ensure the following environment paths are configured:
+
+| Variable Name | Typical Path | Purpose |
+| :--- | :--- | :--- |
+| `KEIL_ROOT` | `C:\Keil_v5` | Base Keil MDK directory |
+| `ARM_TOOLCHAIN` | `C:\Keil_v5\ARM\ARMCC\bin` | Keil Arm Compiler 5 toolchain |
+| `PATH` | `%PATH%;C:\Keil_v5\UV4` | Allows invoking `UV4.exe` from terminal for CI/CD |
+
+### 3. Keil µVision Project Setup
+1. **Launch Keil µVision 5:** Click `Project` > `New µVision Project...`
+2. **Select Device:** Choose `Texas Instruments` > `TM4C123 Series` > **`TM4C123GH6PM`** > Click **OK**.
+3. **Manage Run-Time Environment:**
+   * Tick **`CMSIS`** > **`CORE`**
+   * Tick **`Device`** > **`Startup`** (This adds `startup_TM4C123.s` and `system_TM4C123.c`).
+4. **Add Source Files:**
+   * Right-click `Source Group 1` in the Project explorer > `Add Existing Files to Group...`
+   * Select all `.c` and `.h` files from [`GhostVehicle_Keil/`](GhostVehicle_Keil/):
+     `main.c`, `adc.c`, `dsp.c`, `i2c.c`, `oled.c`, `font.c`, `buzzer.c`, `ultrasonic.c`, `delay.c`, `util.c`.
+5. **Configure Target Options (`Alt + F7`):**
+   * **Target Tab:** Set System Clock to **16.0 MHz** (or configure PLL for 80 MHz).
+   * **C/C++ Tab:** Select **Language C: C99** (crucial to permit inline `for(uint8_t i...)` declarations).
+   * **Debug Tab:** Set debugger to **`Stellaris ICDI`**. Under *Settings*, verify mode is **JTAG/SWD** and check **Reset and Run**.
+   * **Utilities Tab:** Select *Use Target Driver for Flash Programming* (`Stellaris ICDI`).
+6. **Build & Flash:**
+   * Press **`F7`** to compile (target: `0 Errors, 0 Warnings`).
+   * Connect TM4C123G LaunchPad via USB and press **`F8`** to flash.
+
+---
+
+## 🚀 Incremental Bring-Up Stages
+
+Configure `#define STAGE <N>` at the top of [`GhostVehicle_Keil/main.c`](GhostVehicle_Keil/main.c) to isolate each subsystem:
+
+* **Stage 1:** Onboard LaunchPad RGB LED blink test (System clock verify).
 * **Stage 2:** Single-channel ADC read verification via Watch window.
 * **Stage 3:** SSD1306 I2C bus probing and static text display.
 * **Stage 4:** Live single-microphone waveform/bar display on OLED.
@@ -139,14 +192,6 @@ The firmware features an incremental bring-up switch configured via `#define STA
 * **Stage 8:** Asymmetric sensor fusion (distance + raw acoustic corroborate).
 * **Stage 9:** Dynamic acoustic noise profiling and fixed-point DSP bandpass filter.
 * **Stage 10 (FINAL):** Full integrated fusion system (DSP-filtered acoustic verification + ultrasonic distance hierarchy + multi-tier alerts).
-
-### Compilation Steps:
-1. Open **Keil uVision 5**.
-2. Create or open project targeting **TI TM4C123GH6PM**.
-3. Under *Manage Run-Time Environment*, select **CMSIS > CORE** and **Device > Startup**.
-4. Set compiler language to **C99** in *Options for Target > C/C++*.
-5. Set debugger to **Stellaris ICDI** in *Debug* settings.
-6. Build (`F7`) and Flash (`F8`).
 
 ---
 
