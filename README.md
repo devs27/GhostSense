@@ -192,15 +192,11 @@ Configure `#define STAGE <N>` at the top of [`GhostVehicle_Keil/main.c`](GhostVe
 
 ## 👥 Team & Mentorship
 
-* **Course:** 23CCE384 — Design Based Project (Embedded Systems Lab)
-* **Institution:** Amrita School of Engineering, Amrita Vishwa Vidyapeetham, Chennai
-
-### Team Members (Batch 11):
+### Team Members :
 * **Akshaya M V** (`CH.EN.U4CCE24003`)
 * **Devadharshini P** (`CH.EN.U4CCE24004`)
 * **Mukesh M** (`CH.EN.U4CCE24015`)
 
 ### Faculty Mentor:
-* **Dr. C. Ganesh Kumar**  
-  *Chairperson & Assistant Professor, Department of Electronics & Communication Engineering*  
+* **Dr. C. Ganesh Kumar** 
   *Amrita School of Engineering, Amrita Vishwa Vidyapeetham, Chennai*
